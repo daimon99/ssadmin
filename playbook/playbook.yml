@@ -1,0 +1,10 @@
+---
+- name: 部署blog
+  hosts: web
+  vars:
+    databse_name: "ssadmin"
+  vars_files:
+    - secrets.yml
+  roles:
+    - role: daimon.sysbase
+

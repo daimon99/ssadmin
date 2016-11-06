@@ -1,0 +1,4 @@
+app1 ansible_host=sg.daimon.cc
+
+[web]
+app1
