@@ -29,7 +29,7 @@ def quick():
 def install_roles():
     """安装ansible roles"""
     with lcd('playbook'):
-        local('ansible-galaxy install -r requirements.yml -p ./roles -f')
+        local('ansible-galaxy install -r requirements.yml -p ./roles -f -c')
 
 
 def migrate():

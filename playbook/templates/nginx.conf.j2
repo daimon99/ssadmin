@@ -1,0 +1,37 @@
+
+server {
+    listen       80;
+    server_name  {{ domains|join(", ")}};
+
+    charset utf-8;
+    expires +0d;
+    add_header Pragma "no-cache";
+
+    access_log {{ proj_path }}/logs/nginx.access.log main;
+    root  {{ proj_path }}/staticfiles/;
+
+    location / {
+        proxy_pass    http://127.0.0.1:{{gunicorn_port}}/;
+        proxy_redirect    off;
+        proxy_set_header    Host    $host;
+        proxy_set_header    X-Real-IP    $remote_addr;
+        proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+        add_header    Cache-Control no-store;
+    }
+
+    location /static/ {
+        alias {{ proj_path }}/staticfiles/;
+    }
+
+    location /uploads/ {
+        alias {{ proj_path }}/uploads/;
+    }
+
+    location /.well-known/ {
+       alias {{ proj_path }}/src/;
+    }
+
+    location ~ ^/MP_verify_HtWdQJt3j2LC5ROB.txt$ {
+        root /usr/share/nginx/html/;
+    }
+}

@@ -8,6 +8,9 @@
     venv_path: "{{proj_path}}/venv"
     reqs_path: "{{proj_path}}/requirements.txt"
     repo_url: "git://github.com/daimon99/{{proj_name}}"
+    gunicorn_port: 9028
+    domains:
+      - sg.daimon.cc
   vars_files:
     - secrets.yml
   roles:
@@ -24,5 +27,19 @@
     - pip: "requirements={{ reqs_path }} virtualenv={{ venv_path }}"
       tags:
         - quick
+    - django_manage:
+        command: "{{item}}"
+        app_path: "{{proj_path}}/src"
+        virtualenv: "{{venv_path}}"
+      with_items:
+        - makemigrations
+        - migrate
+        - collectstatic
+
+    - name: 更新nginx配置文件
+      template: src=templates/nginx.conf.j2 dest=/etc/nginx/conf.d/{{proj_name}}_prd.conf
+      become: true
+      notify: restart nginx
+
 
 
