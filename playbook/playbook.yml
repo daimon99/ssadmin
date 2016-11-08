@@ -3,8 +3,26 @@
   hosts: web
   vars:
     databse_name: "ssadmin"
+    proj_name: ssadmin
+    proj_path: "/data/prd/{{proj_name}}"
+    venv_path: "{{proj_path}}/venv"
+    reqs_path: "{{proj_path}}/requirements.txt"
+    repo_url: "git://github.com/daimon99/{{proj_name}}"
   vars_files:
     - secrets.yml
   roles:
-    - role: daimon.sysbase
+    - role: daimon99.sysbase
+  tasks:
+    - file: path={{proj_path}} state=directory
+    - git: repo={{repo_url}}
+           dest={{proj_path}}
+    - pip: name={{ item }}
+      with_items:
+        - virtualenv
+      tags:
+        - quick
+    - pip: "requirements={{ reqs_path }} virtualenv={{ venv_path }}"
+      tags:
+        - quick
+
 
