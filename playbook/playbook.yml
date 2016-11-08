@@ -10,13 +10,16 @@
     repo_url: "git://github.com/daimon99/{{proj_name}}"
     gunicorn_port: 9028
     domains:
-      - sg.daimon.cc
+      - www.daimon.cc
   vars_files:
     - secrets.yml
   roles:
     - role: sysbase
   tasks:
-    - file: path={{ proj_path }} state=directory
+    - file: path={{ item }} state=directory
+      with_items:
+        - "{{ proj_path }}"
+        - "{{ proj_path }}/logs"
     - git: repo={{ repo_url }}
            dest={{ proj_path }}
     - pip: name={{ item }}
@@ -39,10 +42,16 @@
       command: lsof -i:{{ gunicorn_port }}
       register: server_started
       ignore_errors: True
-    - debug: msg="{{ server_started }}"
+      tags:
+        - quick
+    - debug: var="{{ server_started.stdout_lines }}"
     - name: 启动ssadmin服务
-      script: "{{ proj_path }}/bin/start.sh"
+      shell: "{{ proj_path }}/bin/start.sh"
+      args:
+        chdir="{{proj_path}}/bin/"
       when: not server_started.stdout
+      tags:
+        - quick
     - name: 更新nginx配置文件
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/conf.d/{{ proj_name }}_prd.conf
       become: true
