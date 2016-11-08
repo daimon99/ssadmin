@@ -35,10 +35,14 @@
         - collectstatic
       tags:
         - quick
-    - command: lsof -i:{{ gunicorn_port }}
+    - name: 检查ssadmin服务状态
+      command: lsof -i:{{ gunicorn_port }}
       register: server_started
-    - script: "{{ proj_path }}/bin/start.sh"
-      when: not server_started
+      ignore_errors: True
+    - debug: msg="{{ server_started }}"
+    - name: 启动ssadmin服务
+      script: "{{ proj_path }}/bin/start.sh"
+      when: not server_started.stdout
     - name: 更新nginx配置文件
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/conf.d/{{ proj_name }}_prd.conf
       become: true
