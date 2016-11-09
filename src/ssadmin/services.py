@@ -6,10 +6,14 @@ log = logging.getLogger(__name__)
 
 
 def add_user(port, password, limit):
-    """创建ss用户"""
+    """创建ss用户
+    >>> add_user(10001, 'daijian', '1g')
+    用户已存在
+    """
     log.debug(u'创建ss用户， port=%s, password=%s', port, password)
     ret = subprocess.check_output(['/data/prd/ss-bash/ssadmin.sh', 'add', port, password, limit])
-    print type(ret), ret
+    print ret
 
 if __name__ == '__main__':
-    add_user('10001', 'daijian')
+    import doctest
+    doctest.testmod()
