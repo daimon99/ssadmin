@@ -108,7 +108,7 @@ def show():
 @log_wrapper
 def show_port(port):
     """显示指定用户流量信息"""
-    ret = subprocess.check_output([SS_ADMIN, 'show', str(port)])
+    ret = subprocess.check_output([SS_ADMIN, 'show', str(port)], stderr=subprocess.STDOUT)
     return ret
 
 
