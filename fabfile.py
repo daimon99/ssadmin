@@ -26,6 +26,12 @@ def quick():
         local('ansible-playbook playbook.yml --tags=quick')
 
 
+def sync():
+    """仅同步代码"""
+    with lcd('playbook'):
+        local('ansible-playbook playbook.yml --tags=sync')
+
+
 def install_roles():
     """安装ansible roles"""
     with lcd('playbook'):
