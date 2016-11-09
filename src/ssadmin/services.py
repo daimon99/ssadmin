@@ -1,11 +1,15 @@
 # coding:utf-8
 import functools
 import logging
+import re
 import subprocess
+
+from .exceptions import SSError
 
 log = logging.getLogger(__name__)
 
 SS_ADMIN = '/data/prd/ss-bash/ssadmin.sh'
+re_show = re.compile('^(?P<port>\d*)\s*(?P<limit>\d*)\(\S*\)\s*(?P<used>\d*)\(\S*\)\s*(?P<remaining>\d*)\(\S*\)')
 
 
 def log_wrapper(func):
@@ -18,10 +22,10 @@ def log_wrapper(func):
             return ret
         except subprocess.CalledProcessError as e:
             log.error(u'调用出错：%s, %s, %s', e.cmd, e.returncode, e.output)
-            return e.returncode
-        except OSError as e:
+            raise e
+        except Exception as e:
             log.error(e)
-            return e.errno
+            raise e
 
     return wrapper
 
@@ -109,7 +113,14 @@ def show():
 def show_port(port):
     """显示指定用户流量信息"""
     ret = subprocess.check_output([SS_ADMIN, 'show', str(port)], stderr=subprocess.STDOUT)
-    return ret
+    lines = ret.splitlines()
+    if len(lines) == 2:
+        detail = lines[1]
+        result_parsed = re_show.match(detail).groupdict()
+        return result_parsed
+    else:
+        log.error('返回结果格式不对，请注意检查: %s', ret)
+        raise SSError('返回结果格式不对，请注意检查：%s' % ret)
 
 
 if __name__ == '__main__':
