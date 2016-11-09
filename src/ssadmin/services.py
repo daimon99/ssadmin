@@ -10,3 +10,6 @@ def add_user(port, password):
     log.debug(u'创建ss用户， port=%s, password=%s', port, password)
     ret = subprocess.check_output(['/data/prd/ss-bash/ssadmin.sh', 'show'])
     print type(ret), ret
+
+if __name__ == '__main__':
+    add_user('10001', 'daijian')
