@@ -26,8 +26,6 @@
       with_items:
         - virtualenv
     - pip: "requirements={{ reqs_path }} virtualenv={{ venv_path }}"
-      tags:
-        - quick
     - django_manage:
         command: "{{ item }}"
         app_path: "{{ proj_path }}/src"
@@ -38,13 +36,19 @@
         - collectstatic
       tags:
         - quick
+    - name: 创建admin用户
+      script: scripts/setadmin.py
+      environment:
+        PATH: "{{ venv_path }}/bin"
+        PROJECT_DIR: "{{ proj_path }}/src"
+        ADMIN_PASSWORD: "{{ admin_pass }}"
     - name: 检查ssadmin服务状态
       command: lsof -i:{{ gunicorn_port }}
       register: server_started
       ignore_errors: True
       tags:
         - quick
-    - debug: var="{{ server_started.stdout_lines }}"
+    - debug: var="server_started.stdout_lines"
     - name: 启动ssadmin服务
       shell: "{{ proj_path }}/bin/start.sh"
       args:
@@ -56,8 +60,7 @@
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/conf.d/{{ proj_name }}_prd.conf
       become: true
       notify: restart nginx
-      tags:
-        - quick
+
   handlers:
     - name: restart nginx
       service: name=nginx state=restarted
