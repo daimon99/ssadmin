@@ -190,6 +190,6 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console', 'app_file'],
-        'level': 'INFO',
+        'level': 'DEBUG',
     },
 }
