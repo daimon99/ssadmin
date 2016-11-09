@@ -10,6 +10,7 @@ def add_user(port, password, limit):
     >>> add_user(10001, 'daijian', '1g')
     用户已存在
     """
+    port, password, limit = str(port), str(password), str(limit)
     log.debug(u'创建ss用户， port=%s, password=%s', port, password)
     ret = subprocess.check_output(['/data/prd/ss-bash/ssadmin.sh', 'add', port, password, limit])
     print ret
