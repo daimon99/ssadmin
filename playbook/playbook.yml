@@ -22,6 +22,7 @@
         - "{{ proj_path }}/logs"
     - git: repo={{ repo_url }}
            dest={{ proj_path }}
+           force=Yes
       tags:
         - quick
         - sync
