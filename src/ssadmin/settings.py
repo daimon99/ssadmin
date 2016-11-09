@@ -187,12 +187,7 @@ LOGGING = {
         #     'level': 'ERROR',
         #     'propagate': False,
         # },
-        'rq.worker': {
-            'handlers': ['rq_console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'turing': {
+        'ssadmin': {
             'handlers': ['console', 'app_file'],
             'level': 'DEBUG',
             'propagate': False,
