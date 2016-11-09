@@ -26,8 +26,13 @@ def quick():
         local('ansible-playbook playbook.yml --tags=quick')
 
 
-def sync():
+def sync(msg=''):
     """仅同步代码"""
+    if msg:
+        # msg有值，则提交代码
+        local('git add .')
+        local('git commit -am "%s"' % msg)
+        local('git push')
     with lcd('playbook'):
         local('ansible-playbook playbook.yml --tags=sync')
 
