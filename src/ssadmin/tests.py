@@ -1,5 +1,5 @@
-# coding:utf-8
-
+# coding: utf8
+# Create your tests here.
 from django.test.testcases import SimpleTestCase
 
 

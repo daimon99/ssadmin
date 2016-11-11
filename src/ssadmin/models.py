@@ -1,7 +1,10 @@
 # coding: utf8
+from __future__ import unicode_literals
 
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
+from ssadmin.exceptions import SSError
 
 
 class SSUser(models.Model):
@@ -16,9 +19,63 @@ class SSUser(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    up_user = models.ForeignKey(User, related_name='down_user')
+    @classmethod
+    def provision(cls, user, password, flow_add, up_user=None):
+        # todo 这里有bug，怎么能够锁住记录，确保获取到正确的最大port是个问题。目前的实现在大并发中会有问题
+        from .services import change
+        try:
+            ssuser = cls.objects.get(user=user)
+            # 用户非首次开通
+            ssuser.password = password
+            ssuser.flow_limit += flow_add
+            ssuser.flow_remaining += flow_add
+            change(ssuser.port, password, ssuser.flow_limit)
+            ssuser.save()
+        except cls.DoesNotExist:
+            # 用户首次开通，创建记录
+            current_port = cls.objects.annotate(max_port=models.Func(models.F('port'), function='max')).get()
+            ssuser = SSUser()
+            ssuser.user = user
+            ssuser.port = current_port if current_port else 10000
+            ssuser.flow_limit = flow_add
+            ssuser.used = 0
+            ssuser.flow_remaining = flow_add
+            ssuser.up_user = up_user
+            change(ssuser.port, password, ssuser.flow_limit)
+            ssuser.save()
 
-    balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+class flow_use_history(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    port = models.IntegerField()
+    limit = models.BigIntegerField()
+    remaining = models.BigIntegerField()
+    used = models.BigIntegerField()
+
+    @classmethod
+    def update_using_info(cls, port, limit, remaining, used):
+        from .services import show_port
+        using_info_dict = show_port(
+            port)  # re.compile('^(?P<port>\d*)\s*(?P<limit>\d*)\(\S*\)\s*(?P<used>\d*)\(\S*\)\s*(?P<remaining>\d*)\(\S*\)')
+        if not using_info_dict.get('port'):
+            raise SSError('port=%s的用户查询流量失败。注意检查该用户是否非法或者开通有问题。' % port)
+        cls.objects.create(port=port,
+                           limit=using_info_dict.get('limit'),
+                           remaining=using_info_dict.get('remaining'),
+                           used=using_info_dict.get('used'))
+
+
+class flow_add_history(models.Model):
+    ssuser = models.ForeignKey(SSUser)
+    port = models.IntegerField()
+
+
+class flow_update_history(models.Model):
+    pass
+
+
+class password_change_history(models.Model):
+    pass
 
 
 class SalesOrder(models.Model):

@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ssadmin.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ssadmin.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
 TIME_ZONE = 'UTC'
 
@@ -168,20 +168,6 @@ LOGGING = {
         # }
     },
     'loggers': {
-        'django': {
-            'handlers': ['console', 'app_file'],
-            'propagate': False,
-        },
-        # 'django.request': {
-        #     'handlers': ['mail_admins'],
-        #     'level': 'ERROR',
-        #     'propagate': False,
-        # },
-        'ssadmin': {
-            'handlers': ['console', 'app_file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
         'django.db': {
             'handlers': ['db_file'],
             'level': 'DEBUG',

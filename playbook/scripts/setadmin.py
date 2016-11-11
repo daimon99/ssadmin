@@ -16,7 +16,7 @@ os.environ.setdefault('ADMIN_PASSWORD', 'hello88765')
 proj_dir = os.path.expanduser(os.environ['PROJECT_DIR'])
 sys.path.append(proj_dir)
 #
-os.environ['DJANGO_SETTINGS_MODULE'] = 'ssadmin.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
 
 # from ssadmin import settings as ssadmin_settings
 # from django.conf import settings
