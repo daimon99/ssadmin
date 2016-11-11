@@ -39,11 +39,6 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 
-@admin.register(models.PayTrans)
-class PayTransAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(models.SalesOrder)
-class SalesOrder(admin.ModelAdmin):
+@admin.register(models.FlowUseHistory)
+class FlowUseHistoryAdmin(admin.ModelAdmin):
     pass

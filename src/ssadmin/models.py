@@ -45,7 +45,7 @@ class SSUser(models.Model):
             ssuser.save()
 
 
-class flow_use_history(models.Model):
+class FlowUseHistory(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     port = models.IntegerField()
     limit = models.BigIntegerField()
