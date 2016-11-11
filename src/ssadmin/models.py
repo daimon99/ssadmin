@@ -22,7 +22,7 @@ class SSUser(models.Model):
     @classmethod
     def provision(cls, user, password, flow_add, up_user=None):
         # todo 这里有bug，怎么能够锁住记录，确保获取到正确的最大port是个问题。目前的实现在大并发中会有问题
-        from .services import change
+        from .services import change, add
         try:
             ssuser = cls.objects.get(user=user)
             # 用户非首次开通
@@ -41,7 +41,7 @@ class SSUser(models.Model):
             ssuser.used = 0
             ssuser.flow_remaining = flow_add
             ssuser.up_user = up_user
-            change(ssuser.port, password, ssuser.flow_limit)
+            add(ssuser.port, password, ssuser.flow_limit)
             ssuser.save()
 
 
