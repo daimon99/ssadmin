@@ -33,10 +33,10 @@ class SSUser(models.Model):
             ssuser.save()
         except cls.DoesNotExist:
             # 用户首次开通，创建记录
-            current_port = cls.objects.annotate(max_port=models.Func(models.F('port'), function='max')).get()
+            current_port = cls.objects.annotate(max_port=models.Func(models.F('port'), function='max')).get().port
             ssuser = SSUser()
             ssuser.user = user
-            ssuser.port = current_port if current_port else 10000
+            ssuser.port = current_port + 1 if current_port else 10000
             ssuser.flow_limit = flow_add
             ssuser.used = 0
             ssuser.flow_remaining = flow_add

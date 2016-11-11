@@ -28,7 +28,7 @@ class UserAdmin(BaseUserAdmin):
 
     def provision_vpn(self, request, queryset):
         for user in queryset:
-            models.SSUser.provision(user.username, '111', '1000000000')
+            models.SSUser.provision(user, '111', '1000000000')
 
     provision_vpn.short_description = u'开通vpn'
 
