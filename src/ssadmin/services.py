@@ -21,7 +21,7 @@ def log_wrapper(func):
             log.info(ret)
             return ret
         except subprocess.CalledProcessError as e:
-            log.error(u'调用出错：%s, %s, %s', e.cmd, e.returncode, e.output)
+            log.error('调用出错：%s, %s, %s', e.cmd, e.returncode, e.output)
             raise e
         except Exception as e:
             log.error(e)
